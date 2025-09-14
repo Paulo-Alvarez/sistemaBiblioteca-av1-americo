@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteca Alvarez</title>
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f0f2f5;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .layout {
+        display: flex;
+        gap: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .form-container, .biblioteca-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+
+    .form-container {
+        flex: 1;
+        min-width: 300px;
+    }
+
+    .biblioteca-container {
+        flex: 2;
+        min-width: 400px;
+        overflow-x: auto;
+    }
+
+    h1 {
+        text-align: center;
+        color: #2f3640;
+        margin-bottom: 20px;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 10px;
+        margin: 6px 0 12px 0;
+        border: 1px solid #dcdde1;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+
+    .buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .buttons button {
+        flex: 1 1 48%;
+        padding: 10px;
+        border: none;
+        border-radius: 6px;
+        background-color: #273c75;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .buttons button:hover {
+        background-color: #40739e;
+    }
+
+    .message {
+        text-align: center;
+        margin: 10px 0;
+        font-weight: bold;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #e1e1e1;
+        font-size: 14px;
+    }
+
+    th {
+        background-color: #40739e;
+        color: white;
+    }
+
+    tr.colecao {
+        background-color: #f5f6fa;
+        font-weight: bold;
+    }
+
+    tr.colecao td {
+        border-bottom: 2px solid #dcdde1;
+    }
+</style>
+</head>
+<body>
+
+<div class="layout">
+    <!-- Coluna esquerda: Formulário -->
+    <div class="form-container">
+        <h1>Cadastro de Livro</h1>
+        <input type="text" id="titulo" placeholder="Título do livro">
+        <input type="text" id="autor" placeholder="Autor">
+        <input type="number" id="ano" placeholder="Ano de publicação">
+        <select id="categoria">
+            <option value="">Selecione a categoria</option>
+            <option value="Fantasia">Fantasia</option>
+            <option value="Romance">Romance</option>
+            <option value="Distopia">Distopia</option>
+            <option value="Ciência">Ciência</option>
+            <option value="História">História</option>
+            <option value="Tecnologia">Tecnologia</option>
+        </select>
+        <input type="text" id="nomeColecao" placeholder="Nome da coleção (opcional)">
+
+        <div class="buttons">
+            <button onclick="criarLivro()">Adicionar Livro</button>
+            <button onclick="criarColecao()">Criar Coleção</button>
+            <button onclick="listarLivros()">Listar</button>
+            <button onclick="atualizarLivro()">Atualizar</button>
+            <button onclick="deletarLivro()">Deletar</button>
+        </div>
+
+        <div class="message" id="message"></div>
+    </div>
+
+    <!-- Coluna direita: Biblioteca -->
+    <div class="biblioteca-container">
+        <h1>Biblioteca</h1>
+        <table id="tabelaLivros">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Título / Coleção</th>
+                    <th>Autor</th>
+                    <th>Ano</th>
+                    <th>Categoria</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<script src="biblioteca.js"></script>
+<script>
+    const controller = new LivroController();
+
+    function mostrarMensagem(texto, cor = "red") {
+        const msg = document.getElementById("message");
+        msg.style.color = cor;
+        msg.textContent = texto;
+        setTimeout(() => msg.textContent = "", 3000);
+    }
+
+    function criarLivro() {
+        const titulo = document.getElementById("titulo").value.trim();
+        const autor = document.getElementById("autor").value.trim();
+        const ano = parseInt(document.getElementById("ano").value);
+        const categoria = document.getElementById("categoria").value;
+        const nomeColecao = document.getElementById("nomeColecao").value.trim();
+
+        if (!titulo || !autor || !ano || !categoria) {
+            mostrarMensagem("Preencha todos os campos obrigatórios!");
+            return;
+        }
+
+        // A lógica de verificação de título já está no LivroController.criarLivro
+        // Então você pode simplificar essa parte.
+
+        controller.criarLivro(titulo, autor, ano, categoria, nomeColecao);
+    }
+
+    function criarColecao() {
+        const nomeColecao = prompt("Digite o nome da nova coleção:");
+        if (!nomeColecao) return;
+        controller.criarColecao(nomeColecao);
+        mostrarMensagem(`Coleção "${nomeColecao}" criada!`, "green");
+    }
+
+    function listarLivros() {
+        const tbody = document.querySelector("#tabelaLivros tbody");
+        tbody.innerHTML = "";
+
+        controller.listarLivros().forEach(item => {
+            if (item instanceof ColecaoLivros) {
+                const trColecao = document.createElement("tr");
+                trColecao.classList.add("colecao");
+                trColecao.innerHTML = `<td>-</td><td colspan="4">Coleção: ${item.nome}</td>`;
+                tbody.appendChild(trColecao);
+
+                item.listar().forEach(livro => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>${livro.codigo}</td>
+                        <td>↳ ${livro.titulo}</td>
+                        <td>${livro.autor}</td>
+                        <td>${livro.ano}</td>
+                        <td>${livro.categoria}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        });
+    }
+
+    function atualizarLivro() {
+        const codigo = parseInt(prompt("Digite o código do livro que deseja atualizar:"));
+        if (!codigo || isNaN(codigo)) {
+            mostrarMensagem("Código inválido!");
+            return;
+        }
+
+        const titulo = prompt("Novo título (deixe em branco para não alterar):");
+        const autor = prompt("Novo autor (deixe em branco para não alterar):");
+        const ano = parseInt(prompt("Novo ano (deixe em branco para não alterar):"));
+        const categoria = prompt("Nova categoria (deixe em branco para não alterar):");
+        
+        const dadosAtualizados = {};
+        if (titulo !== null && titulo.trim() !== "") dadosAtualizados.titulo = titulo;
+        if (autor !== null && autor.trim() !== "") dadosAtualizados.autor = autor;
+        if (!isNaN(ano)) dadosAtualizados.ano = ano;
+        if (categoria !== null && categoria.trim() !== "") dadosAtualizados.categoria = categoria;
+
+        controller.atualizarLivro(codigo, dadosAtualizados);
+    }
+
+    function deletarLivro() {
+        const codigo = parseInt(prompt("Digite o código do livro que deseja deletar:"));
+        if (!codigo || isNaN(codigo)) {
+            mostrarMensagem("Código inválido!");
+            return;
+        }
+        controller.deletarLivro(codigo);
+    }
+
+    // Chama a função listarLivros assim que a página é carregada
+    window.onload = listarLivros;
+</script>
+
+</body>
+</html>
