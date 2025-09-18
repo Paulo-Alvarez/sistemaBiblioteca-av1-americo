@@ -1,10 +1,8 @@
-// =========================
-// GRASP: Creator
-// =========================
+
 class Biblioteca {
     constructor() {
-        this.itens = []; // Armazena ItemBiblioteca (Livros e Coleções)
-        this.proximoCodigo = 1; // Código único incremental
+        this.itens = []; 
+        this.proximoCodigo = 1; 
     }
 
     gerarCodigo() {
@@ -27,14 +25,12 @@ class Biblioteca {
     }
 
     deletar(codigo) {
-        // Tenta deletar livro diretamente
         for (let item of this.itens) {
             if (item instanceof Livro && item.deletar(codigo)) {
                 const index = this.itens.indexOf(item);
                 this.itens.splice(index, 1);
                 return true;
             }
-            // Se for coleção, apenas remove o livro dentro dela
             if (item instanceof ColecaoLivros && item.deletar(codigo)) {
                 return true;
             }
@@ -43,9 +39,6 @@ class Biblioteca {
     }
 }
 
-// =========================
-// GoF: Factory Method
-// =========================
 class LivroFactory {
     static criarLivro(titulo, autor, ano, categoria, biblioteca) {
         const codigo = biblioteca.gerarCodigo();
@@ -53,9 +46,6 @@ class LivroFactory {
     }
 }
 
-// =========================
-// Composite
-// =========================
 class ItemBiblioteca {
     adicionar(item) { throw "Não implementado"; }
     listar() { throw "Não implementado"; }
@@ -120,9 +110,6 @@ class ColecaoLivros extends ItemBiblioteca {
     }
 }
 
-// =========================
-// Chain of Responsibility
-// =========================
 class Validador {
     setProximo(proximo) {
         this.proximo = proximo;
@@ -171,9 +158,6 @@ class ValidadorCategoria extends Validador {
     }
 }
 
-// =========================
-// Controller atualizado com Local Storage
-// =========================
 class LivroController {
     constructor() {
         this.biblioteca = new Biblioteca();

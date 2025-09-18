@@ -112,7 +112,6 @@
 <body>
 
 <div class="layout">
-    <!-- Coluna esquerda: Formulário -->
     <div class="form-container">
         <h1>Cadastro de Livro</h1>
         <input type="text" id="titulo" placeholder="Título do livro">
@@ -140,7 +139,6 @@
         <div class="message" id="message"></div>
     </div>
 
-    <!-- Coluna direita: Biblioteca -->
     <div class="biblioteca-container">
         <h1>Biblioteca</h1>
         <table id="tabelaLivros">
@@ -180,9 +178,6 @@
             mostrarMensagem("Preencha todos os campos obrigatórios!");
             return;
         }
-
-        // A lógica de verificação de título já está no LivroController.criarLivro
-        // Então você pode simplificar essa parte.
 
         controller.criarLivro(titulo, autor, ano, categoria, nomeColecao);
     }
@@ -250,7 +245,6 @@
         controller.deletarLivro(codigo);
     }
 
-    // Chama a função listarLivros assim que a página é carregada
     window.onload = listarLivros;
 </script>
 
